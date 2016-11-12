@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<!-- saved from url=(0026)http://192.168.1.197:8080/ -->
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Chart.js Test  Line Chart</title>
+    <script src="./chartjs/Chart.js"></script>
+    <style type="text/css">
+
+    .chartWrapper{
+        max-height: 500px;
+        max-width: 1000px;
+        background-color: black;
+        padding:3px;
+    }
+
+    .canvas-chart{
+        background:rgba(255,255,255,1);
+        border: 1px solid black;
+    }
+
+    .div-info{
+          max-width: 1000px;
+        font-size:16px;
+        font-family: Arial,'Helvetica Neue', Helvetica,  sans-serif;
+        font-weight: bold;
+        margin-bottom: 3px;
+       
+    }
+
+    body{
+        font-family: Arial;
+        display: block;
+        margin: 6px;
+    }
+    </style>
+</head >
+<body>
+<div class="div-info">
+	<center>Chart.js Experimenting.</center><br>
+    Much better response than .NET chart object server side.
+    Very feasible to bring in the data from SQL or MongodB.
+    Next step is to use live data from EIRP test data schema.
+    <br>
+    11-10-16: Added feature to load data file from server using XmlHttpHeader. Very Cool!
+</div>
+<br>
+<div style="font-size:20px;">
+Choose Data to Plot:
+ <select id="ddlDatFile" style="font-size:20px;">
+    <option value="IMD.txt">IMD</option>
+    <option value="SpecRG.txt">Spec RG</option>
+  </select>
+  <input type="button" value="Update Chart" onclick="loadXMLDoc()" style="font-size:20px;">
+  Check out the raw data link:
+<a href="IMD.txt" target="_blank">IMD  </a>
+<a href="SpecRG.txt" target="_blank">SpecRG  </a>
+<br>
+</div>
+<div class="chartWrapper" style="">
+<canvas class="canvas-chart" style="" id="scatterChart" ></canvas>
+</div>
+<br><br>
+
+<div class="chartWrapper" style="">
+<canvas class="canvas-chart" id="myChart" ></canvas>
+</div>
+
+<script>
+//experiment with  text decoder to open a file of data and read 
+// into and array
+//const {Cu} = require("chrome");
+
+// To read content from file
+// this get call by the onchange on the input file 
+// <input type='file' onchange="onchange(event)"
+var myArray = [];
+var ImdArray = [];
+//SEt the default values for ImdArray
+ImdArray[0] = new Point(-19,0);
+ImdArray[1] = new Point(0, 10);
+ImdArray[2] = new Point(10, 5);
+
+
+
+function ReadIt(event){
+    var reader = new FileReader();
+    var selectedFile = event.target.files[0];
+    //var selectedFile = document.getElementById('input').files[0];
+
+    reader.onload=function(event) {
+        //the content of the buffer should be readble here
+         var _text = event.target.result;
+         //read each line array entry
+         myArray = _text.split(/[\r\n]+/g);
+         ImdArray = text2DatArray(myArray);
+       // console.log(event.target.result);
+    };
+    reader.readAsText(selectedFile);
+}
+
+
+
+
+
+
+function text2DatArray(array){
+    // this will accept a text array with x,y plot data
+    //  points.
+    // use split to get split each piece. Then to point().
+    var DataArray = [];
+    for (i=0;i<array.length;i++){
+        var splitVal = array[i].split(",");
+        DataArray[i] = new Point(splitVal[0],splitVal[1]); 
+    }
+    //console.log(DataArray);
+    return DataArray;
+}
+
+// make the data array
+
+
+// Build a function to make data array for scatter Chart.js
+// going to use 600 point to get a feel for the chart behavoir
+// with large numbers of points.
+
+
+//constructor for a Point object
+function Point(x,y){
+    this.x = x;
+    this.y = y;
+}
+
+
+function MakeData(min,max,numPoints){
+    var theData = [];
+    var midValue = Math.random()*3; 
+    for(i=0;i<=numPoints;i++){   
+        var xVal = min+((max-min)/numPoints * i);
+        var yVal = (Math.random() ) + 70 +midValue;
+        theData[i] = new Point(xVal,yVal);
+    }
+    return theData;
+}
+
+var theStuff = MakeData(30,31,50);
+var theStuff2 = MakeData(30,31,100);
+
+    var ctx = document.getElementById('myChart');
+	var myScatterChart = new Chart(ctx, {
+	type: 'line',
+    data:  {     
+        //fill: false,
+    	datasets: [
+            {
+            borderWidth: 1, 
+            radius:0.2,
+            fill:false, 
+            borderColor:"rgba(0,0,0,1)",      
+            label:'Ds1',     
+            /*data:[
+                { x: 10, y: 31 },
+                { x: 20, y: 35},
+                { x: 30, y: 30 },
+                { x: 40, y: 35 },
+                { x: 50, y: 35 },
+                { x: 60, y: 38 },
+                { x: 70, y: 38 },
+                { x: 80, y: 34 },
+                { x: 90, y: 44}
+            ] */
+            data: theStuff
+            },
+            {
+            label:'Ds2',
+            borderWidth:2,
+            borderColor:"rgba(0,0,255,1)",
+            radius:0.5,
+            data: theStuff2
+            /*[
+                { x: 10, y: 45 },
+                { x: 20, y: 50 },
+                { x: 30, y: 40 },
+                { x: 40, y: 45 },
+                { x: 50, y: 45 },
+                { x: 60, y: 48 },
+                { x: 70, y: 43 },
+                { x: 80, y: 41 },
+                { x: 90, y: 28 }
+            ]  */
+            }
+        ]
+    },
+    options: { 
+            title:{
+                display:true,
+                text:'SCATTER CHART',
+                position:'top',
+                fontSize:20,
+            },   
+            scales: {
+            yAxes:[{
+                ticks: {
+                    fontSize: 15,
+                    min: 70,
+                    max: 75,
+                    stepSize: 0.5
+                }
+            }],
+            xAxes:
+            [{
+                
+                type: 'linear',
+                position: 'bottom',
+                ticks: {
+                    fontSize: 15
+                }
+            }]
+            
+        }
+    }
+    });  
+    
+   
+
+
+
+    ///using the scatter chart example 
+    var sctr = document.getElementById('scatterChart');
+    //place holder for scatter charter
+    makeScatter(sctr);
+function makeScatter(_canvas){
+    
+    // now rebuild with data
+    var scatterChart = new Chart(sctr, {
+    type: 'line',
+    data: {
+        datasets: [{
+        raqius:1,
+        borderWidth: 2,
+        borderColor:"rgba(255,0,0,0.9)",
+        fill:false,
+            label: 'Scatter Dataset',
+            data: ImdArray
+            /*[
+                { x: -10, y:  0},
+                { x:   0, y: 10}, 
+                { x:  10, y:  5},
+                { x:  10.1, y:  5.1},
+                { x:  10.2, y:  5.2},
+                { x:  10.5, y:  5.8},
+                { x:  11.1, y:  6.4},
+            ]*/
+        }]
+    },
+    options: {
+        title:{
+            display:true,
+            text:'Another Scatter Chart: some different options',
+            position:'top',
+            fontSize:20,
+        },
+        scales: {
+            yAxes:[{
+                gridLines:{
+                    color: "rgba(0,0,0,1)"
+                }, 
+                ticks: {
+                    fontSize: 15
+                },
+                scaleLabel:{
+                    display: true,
+                    labelString: "UNITS Y-AXIS",
+                    fontSize: 15
+                }
+            }],
+            xAxes: [{
+                gridLines:{
+                    color: "rgba(0,0,0,1)"
+                }, 
+                type: 'linear',
+                position: 'bottom',
+                ticks: {
+                    fontSize: 15,
+                   /* min: -10,
+                    max: 12,
+                    stepSize: 2 */
+                },
+                scaleLabel:{
+                    display: true,
+                    labelString: "UNITS X-AXIS",
+                    fontSize:20
+                }
+
+            }]
+        }
+    }
+    });
+}; //end of makeChart
+
+
+
+</script>
+
+<br>
+
+ 
+
+
+
+
+<p id="demo"></p>
+
+<script>
+ 
+
+function loadXMLDoc() {
+
+    //read in the selected file to load into the XHR
+    var ddl = document.getElementById("ddlDatFile");
+    var DatFile2 = ddl.options[ddl.selectedIndex].value;
+    //console.log(ddl.options[ddl.selectedIndex].value);
+  
+
+
+  var xhttp = new XMLHttpRequest();
+  var xhttpResponse = [];
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+     // document.getElementById("demo").innerHTML =
+      //this.responseText;
+      xhttpResponse = xhttp.response;
+      //call the function to turn textarray to data array
+      //ImdArray is the one that the bottom chart uses
+     //ImdArray = text2DatArray(xhttpResponse);
+       var _xhttpResponse = xhttpResponse.split(/[\r\n]+/g);
+        ImdArray = text2DatArray(_xhttpResponse);
+
+      //console.log("SENDING THE xhttpResponse Next Line");
+      //console.log(xhttpResponse);
+      console.log("NOW SENDING THE ImdArray");
+      console.log(ImdArray);
+      makeScatter(sctr);
+    }
+  };
+
+
+
+
+  xhttp.open("GET", DatFile2, true);
+  //trying to set as arrayBuffer
+  //xhttp.responseType ="arrayBuffer";
+  xhttp.send();
+
+  
+  
+}
+</script>
+
+</body>
+</html>
