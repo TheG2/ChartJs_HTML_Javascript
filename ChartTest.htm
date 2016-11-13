@@ -110,10 +110,6 @@ function ReadIt(event){
 }
 
 
-
-
-
-
 function text2DatArray(array){
     // this will accept a text array with x,y plot data
     //  points.
@@ -127,7 +123,6 @@ function text2DatArray(array){
     return DataArray;
 }
 
-// make the data array
 
 
 // Build a function to make data array for scatter Chart.js
@@ -168,17 +163,6 @@ var theStuff2 = MakeData(30,31,100);
             fill:false, 
             borderColor:"rgba(0,0,0,1)",      
             label:'Ds1',     
-            /*data:[
-                { x: 10, y: 31 },
-                { x: 20, y: 35},
-                { x: 30, y: 30 },
-                { x: 40, y: 35 },
-                { x: 50, y: 35 },
-                { x: 60, y: 38 },
-                { x: 70, y: 38 },
-                { x: 80, y: 34 },
-                { x: 90, y: 44}
-            ] */
             data: theStuff
             },
             {
@@ -187,17 +171,6 @@ var theStuff2 = MakeData(30,31,100);
             borderColor:"rgba(0,0,255,1)",
             radius:0.5,
             data: theStuff2
-            /*[
-                { x: 10, y: 45 },
-                { x: 20, y: 50 },
-                { x: 30, y: 40 },
-                { x: 40, y: 45 },
-                { x: 50, y: 45 },
-                { x: 60, y: 48 },
-                { x: 70, y: 43 },
-                { x: 80, y: 41 },
-                { x: 90, y: 28 }
-            ]  */
             }
         ]
     },
@@ -231,10 +204,6 @@ var theStuff2 = MakeData(30,31,100);
     }
     });  
     
-   
-
-
-
     ///using the scatter chart example 
     var sctr = document.getElementById('scatterChart');
     //place holder for scatter charter
@@ -252,15 +221,6 @@ function makeScatter(_canvas){
         fill:false,
             label: 'Scatter Dataset',
             data: ImdArray
-            /*[
-                { x: -10, y:  0},
-                { x:   0, y: 10}, 
-                { x:  10, y:  5},
-                { x:  10.1, y:  5.1},
-                { x:  10.2, y:  5.2},
-                { x:  10.5, y:  5.8},
-                { x:  11.1, y:  6.4},
-            ]*/
         }]
     },
     options: {
@@ -307,7 +267,6 @@ function makeScatter(_canvas){
     }
     });
 }; //end of makeChart
-
 
 
 </script>
